@@ -1,9 +1,9 @@
 use log::debug;
 use anyhow::{Result, bail};
-use std::io;
+use std::io::Read;
 
-
-pub fn get_move() -> Result<(u8,u8)> {
+// TODO utiliser "where ... ?"
+pub fn get_move(input: &mut impl Read) -> Result<(u8,u8)> {
     debug!("Get player's move from keyboard");
     
     println!("\nPlease input your move. Format : x_coord (from 0 to 2) , y_coord (from 0 to 2)");
@@ -13,10 +13,15 @@ pub fn get_move() -> Result<(u8,u8)> {
     println!("{}", board_example);
 
     let mut player_input = String::new();
-    io::stdin().read_line(&mut player_input)?;
-    let player_move = get_input_from_keyboard(&player_input)?;
-    //TODO : traiter ici l'erreur ou "plus haut" ?
-    Ok(player_move)
+
+    loop {
+        input.read_to_string(&mut player_input)?;
+        match get_input_from_keyboard(&player_input) {
+            Ok(player_move) => return Ok(player_move),
+            Err(e) => println!("Error : {} \nTry again",e),
+        }
+        player_input.clear();
+    }
 }
 
 fn get_input_from_keyboard(player_input: &str) -> Result<(u8,u8)> {
@@ -24,17 +29,21 @@ fn get_input_from_keyboard(player_input: &str) -> Result<(u8,u8)> {
     let mut player_move:(u8,u8) = (u8::MAX,u8::MAX);
     for s in player_input.trim().split(",") {
         if player_move.0 == u8::MAX {
-            player_move.0 = s.trim().parse()?;
-            // TODO : personnaliser l'erreur
+            match s.trim().parse() {
+                Ok(v) => player_move.0 = v,
+                Err(e) => bail!("Coordinates not included in [0..2],[0..2] - {}",e),
+            }
         }
         else {
-            player_move.1 = s.trim().parse()?;
-            // TODO : personnaliser l'erreur 
+            match s.trim().parse() {
+                Ok(v) => player_move.1 = v,
+                Err(e) => bail!("Coordinates not included in [0..2],[0..2] - {}",e),
+            }
         }
     }
     debug!("Move : {:?}",player_move);
     if player_move.0 > 2 || player_move.1 > 2 {
-        bail!("Coordinates not included in [0..2]");
+        bail!("Coordinates not included in [0..2],[0..2]");
     } 
     Ok(player_move)
 }
@@ -52,14 +61,12 @@ mod tests {
         init();
         let input = "1,2";
         assert_eq!((1,2),get_input_from_keyboard(input).unwrap());
-    }
-
-    #[test]
-    #[should_panic(expected = "invalid digit found in string")]
-    pub fn test_get_negative_input_from_keyboard() {
-        init();
-        let input = "-1,2";
-        assert_eq!((1,3),get_input_from_keyboard(input).unwrap());
+        let input = "1 , 2";
+        assert_eq!((1,2),get_input_from_keyboard(input).unwrap());
+        let input = "1, 2 ";
+        assert_eq!((1,2),get_input_from_keyboard(input).unwrap());
+        let input = " 1 , 2";
+        assert_eq!((1,2),get_input_from_keyboard(input).unwrap());    
     }
 
     #[test]
@@ -67,9 +74,19 @@ mod tests {
     pub fn test_get_bad_input_from_keyboard() {
         init();
         let input = "1,3";
-        assert_eq!((1,3),get_input_from_keyboard(input).unwrap());
-        assert_eq!((1,3),get_input_from_keyboard(input).unwrap());
+        get_input_from_keyboard(input).unwrap();
+        let input = "-1,2";
+        get_input_from_keyboard(input).unwrap();
     }
 
+    #[test]
+    pub fn test_get_move() {
+        let mut input = "1,2".as_bytes();
+        assert_eq!((1,2),get_move(&mut input).unwrap());
+        let mut input = "2 ,2 ".as_bytes();
+        assert_eq!((2,2),get_move(&mut input).unwrap());
+        let mut input = "2,0".as_bytes();
+        assert_eq!((2,0),get_move(&mut input).unwrap());
+    }
 
 }

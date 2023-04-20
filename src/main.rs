@@ -1,7 +1,8 @@
 mod board;
 mod player;
 //use anyhow::{Context,Result};
-use log::{info, error};
+use log::{info};
+use std::io;
 
 //pub type Error = anyhow::Error;
 //pub type Result<T> = anyhow::Result<T>;
@@ -13,8 +14,5 @@ fn main() {
     let output = board::render_board(board).unwrap();
     println!("{}",output);
 
-    match player::get_move() {
-        Ok(t) => info!("your move : {:?}",t),
-        Err(e) => error!("{}",e),
-    }
+    println!("{:?}",player::get_move(&mut io::stdin().lock()).unwrap());
 }
