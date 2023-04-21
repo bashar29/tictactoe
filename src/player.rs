@@ -1,9 +1,9 @@
 use log::debug;
 use anyhow::{Result, bail};
-use std::io::Read;
+use std::io::{Read, BufRead};
 
 // TODO utiliser "where ... ?"
-pub fn get_move(input: &mut impl Read) -> Result<(u8,u8)> {
+pub fn get_move(input: &mut impl BufRead) -> Result<(u8,u8)> {
     debug!("Get player's move from keyboard");
     
     println!("\nPlease input your move. Format : x_coord (from 0 to 2) , y_coord (from 0 to 2)");
@@ -12,15 +12,12 @@ pub fn get_move(input: &mut impl Read) -> Result<(u8,u8)> {
     let board_example = "  0 1 2\n".to_owned() + " -------\n" + "0      \n" + "1      \n" + "2      \n";
     println!("{}", board_example);
 
-    let mut player_input = String::new();
-
     loop {
-        input.read_to_string(&mut player_input)?;
+        let player_input = input.lines().next().unwrap()?;
         match get_input_from_keyboard(&player_input) {
             Ok(player_move) => return Ok(player_move),
             Err(e) => println!("Error : {} \nTry again",e),
         }
-        player_input.clear();
     }
 }
 
