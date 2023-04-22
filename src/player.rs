@@ -81,11 +81,15 @@ mod tests {
 
     #[test]
     pub fn test_get_move() {
-        let mut input = "1,2".as_bytes();
+        let mut input = "1,2\n".as_bytes();
         assert_eq!((1, 2), get_move(&mut input).unwrap());
-        let mut input = "2 ,2 ".as_bytes();
+        let mut input = "2 ,2 \n".as_bytes();
         assert_eq!((2, 2), get_move(&mut input).unwrap());
-        let mut input = "2,0".as_bytes();
+        let mut input = "2,0\n".as_bytes();
+        assert_eq!((2, 0), get_move(&mut input).unwrap());
+        let mut input = "2,0\n 3,5".as_bytes();
+        assert_eq!((2, 0), get_move(&mut input).unwrap());
+        let mut input = "2,0\n 1,1".as_bytes();
         assert_eq!((2, 0), get_move(&mut input).unwrap());
     }
 }

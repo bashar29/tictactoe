@@ -19,5 +19,4 @@ fn main() {
     let board = board::make_move(board, mv, player::Player::PlayerO).unwrap();
     let output = render_board(board).unwrap();
     println!("{}", output);
-
 }
