@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, bail};
 use log::debug;
 
 use crate::player::Player;
@@ -10,7 +10,7 @@ pub fn generate_new_board() -> Board {
     [[None, None, None], [None, None, None], [None, None, None]]
 }
 
-fn duplicate_board(board: Board) -> Board {
+fn duplicate_board(board: &Board) -> Board {
     let mut new_board = generate_new_board();
     for (i, line) in board.iter().enumerate() {
         for (j, c) in line.iter().enumerate() {
@@ -18,6 +18,10 @@ fn duplicate_board(board: Board) -> Board {
         }
     }
     new_board
+}
+
+pub fn is_valid_move(board: &Board,new_move: (usize,usize)) -> bool {
+    board[new_move.0][new_move.1].is_none()
 }
 
 pub fn render_board(board: Board) -> Result<String> {
@@ -39,7 +43,10 @@ pub fn render_board(board: Board) -> Result<String> {
     Ok(output)
 }
 
-pub fn make_move(board: Board, new_move: (usize, usize), player: Player) -> Result<Board> {
+pub fn make_move(board: &Board, new_move: (usize, usize), player: &Player) -> Result<Board> {
+    if !is_valid_move(&board, new_move) {
+        bail!("Invalid move !");
+    }
     let mut new_board = duplicate_board(board);
     match player {
         Player::PlayerO => new_board[new_move.0][new_move.1] = Some('O'),
@@ -86,7 +93,7 @@ mod tests {
             [None, Some('O'), Some('X')],
             [None, Some('X'), Some('X')],
         ];
-        let new_board = duplicate_board(board);
+        let new_board = duplicate_board(&board);
         assert_eq!(board, new_board);
     }
 
@@ -100,12 +107,31 @@ mod tests {
         ];
         let new_move: (usize, usize) = (1, 0);
         let p1 = Player::PlayerO;
-        let new_board = make_move(board, new_move, p1).unwrap();
+        let new_board = make_move(&board, new_move, &p1).unwrap();
         board[1][0] = Some('O');
+        assert_eq!(new_board, board);
         let new_new_move: (usize, usize) = (2, 0);
         let p2 = Player::PlayerX;
-        let new_new_board = make_move(new_board, new_new_move, p2).unwrap();
+        let new_new_board = make_move(&new_board, new_new_move, &p2).unwrap();
         board[2][0] = Some('X');
         assert_eq!(new_new_board, board);
+        let last_move = (2,0);
+        let error: anyhow::Error = make_move(&new_new_board, last_move, &p1).unwrap_err();
+        let expected_error: anyhow::Error = anyhow::anyhow!("Invalid move !");
+        assert_eq!(error.to_string(), expected_error.to_string());
+    }
+
+    #[test]
+    pub fn test_is_valid_move() {
+        init();
+        let board: [[Option<char>; 3]; 3] = [
+            [Some('O'), Some('X'), Some('O')],
+            [None, None, Some('X')],
+            [None, Some('X'), None],
+        ];
+        let mv: (usize,usize) = (1,1);
+        assert_eq!(true,is_valid_move(&board, mv));
+        let mv: (usize,usize) = (0,0);
+        assert_eq!(false,is_valid_move(&board, mv));
     }
 }

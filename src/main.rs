@@ -12,11 +12,19 @@ use crate::board::render_board;
 fn main() {
     env_logger::init();
     info!("Lauching the game ...");
-    let board: board::Board = board::generate_new_board();
+    let mut board: board::Board = board::generate_new_board();
     let output = board::render_board(board).unwrap();
     println!("{}", output);
-    let mv = player::get_move(&mut io::stdin().lock()).unwrap();
-    let board = board::make_move(board, mv, player::Player::PlayerO).unwrap();
-    let output = render_board(board).unwrap();
-    println!("{}", output);
+    loop {
+        let mv = player::get_move(&mut io::stdin().lock()).unwrap();
+        if board::is_valid_move(&board, mv) {
+            board = board::make_move(&board, mv, &player::Player::PlayerO).unwrap();
+            let output = render_board(board).unwrap();
+            println!("{}", output);
+            break;
+        }
+        else {
+            println!("Illegal move - try again");
+        }
+    }
 }
