@@ -105,16 +105,19 @@ mod tests {
             [None, Some('O'), Some('X')],
             [None, Some('X'), Some('X')],
         ];
+        
         let new_move: (usize, usize) = (1, 0);
         let p1 = Player::PlayerO;
         let new_board = make_move(&board, new_move, &p1).unwrap();
         board[1][0] = Some('O');
         assert_eq!(new_board, board);
+        
         let new_new_move: (usize, usize) = (2, 0);
         let p2 = Player::PlayerX;
         let new_new_board = make_move(&new_board, new_new_move, &p2).unwrap();
         board[2][0] = Some('X');
         assert_eq!(new_new_board, board);
+        
         let last_move = (2,0);
         let error: anyhow::Error = make_move(&new_new_board, last_move, &p1).unwrap_err();
         let expected_error: anyhow::Error = anyhow::anyhow!("Invalid move !");
