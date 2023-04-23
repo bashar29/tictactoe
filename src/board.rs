@@ -43,8 +43,7 @@ pub fn is_move_win(board: &Board) -> Option<Player> {
         {
             if board[line[0].0][line[0].1] == Some('X') {
                 return Some(Player::PlayerX);
-            }
-            else {
+            } else {
                 return Some(Player::PlayerO);
             }
         }
@@ -165,16 +164,16 @@ mod tests {
         let mv: (usize, usize) = (0, 0);
         assert_eq!(false, is_valid_move(&board, mv));
     }
-    
+
     #[test]
     pub fn test_is_move_win() {
         init();
-        let board_win : [[Option<char>; 3]; 3] = [
+        let board_win: [[Option<char>; 3]; 3] = [
             [Some('X'), Some('X'), Some('X')],
             [None, Some('O'), Some('O')],
             [None, Some('X'), Some('O')],
         ];
-        let another_board_win : [[Option<char>; 3]; 3] = [
+        let another_board_win: [[Option<char>; 3]; 3] = [
             [Some('X'), None, Some('O')],
             [None, Some('O'), Some('X')],
             [Some('O'), Some('X'), Some('X')],
@@ -188,8 +187,8 @@ mod tests {
         let p2 = is_move_win(&another_board_win).unwrap();
         let p3 = is_move_win(&board_not_win);
 
-        assert_eq!(p1,Player::PlayerX);
-        assert_eq!(p2,Player::PlayerO);
+        assert_eq!(p1, Player::PlayerX);
+        assert_eq!(p2, Player::PlayerO);
         assert!(p3.is_none());
     }
 }

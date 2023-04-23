@@ -52,7 +52,7 @@ fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {
         bail!("Coordinates not included in [0..2],[0..2]");
     }
 
-    let player_move_x_y = (player_move.1,player_move.0);
+    let player_move_x_y = (player_move.1, player_move.0);
 
     Ok(player_move_x_y)
 }

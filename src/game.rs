@@ -57,6 +57,6 @@ mod tests {
         init();
         let active_player = Player::PlayerO;
         let next_player = switch_player(&active_player);
-        assert_ne!(active_player,next_player);
+        assert_ne!(active_player, next_player);
     }
 }
