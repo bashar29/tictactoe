@@ -2,6 +2,7 @@ use anyhow::{bail, Result};
 use log::debug;
 use std::io::BufRead;
 
+#[derive(PartialEq,Debug)]
 pub enum Player {
     PlayerX,
     PlayerO,

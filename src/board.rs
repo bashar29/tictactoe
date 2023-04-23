@@ -24,6 +24,11 @@ pub fn is_valid_move(board: &Board,new_move: (usize,usize)) -> bool {
     board[new_move.0][new_move.1].is_none()
 }
 
+pub fn is_move_win(board: &Board) -> bool {
+    // TODO
+    false
+}
+
 pub fn render_board(board: Board) -> Result<String> {
     debug!("Render a board : {:?}", board);
     let mut output = "  0 1 2\n".to_owned();
