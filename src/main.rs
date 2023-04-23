@@ -12,6 +12,7 @@ use crate::board::render_board;
 fn main() {
     env_logger::init();
     info!("Lauching the game ...");
+    player::print_player_input_rule();
     let mut board: board::Board = board::generate_new_board();
     let output = board::render_board(board).unwrap();
     println!("{}", output);
