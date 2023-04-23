@@ -34,7 +34,7 @@ pub fn get_move(input: &mut impl BufRead) -> Result<(usize, usize)> {
 fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {
     debug!("Transform keyboard input in tuple");
     let mut player_move: (usize, usize) = (usize::MAX, usize::MAX);
-    for s in player_input.trim().split(",") {
+    for s in player_input.trim().split(',') {
         if player_move.0 == usize::MAX {
             match s.trim().parse() {
                 Ok(v) => player_move.0 = v,

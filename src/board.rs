@@ -58,12 +58,12 @@ pub fn render_board(board: Board) -> Result<String> {
 
     for (i, line) in board.iter().enumerate() {
         let mut line_to_print: String = i.to_string();
-        line_to_print.push_str(" ");
-        line_to_print.push(line[0].unwrap_or_else(|| ' '));
-        line_to_print.push_str(" ");
-        line_to_print.push(line[1].unwrap_or_else(|| ' '));
-        line_to_print.push_str(" ");
-        line_to_print.push(line[2].unwrap_or_else(|| ' '));
+        line_to_print.push(' ');
+        line_to_print.push(line[0].unwrap_or(' '));
+        line_to_print.push(' ');
+        line_to_print.push(line[1].unwrap_or(' '));
+        line_to_print.push(' ');
+        line_to_print.push(line[2].unwrap_or(' '));
         line_to_print.push('\n');
         output.push_str(&line_to_print);
     }
@@ -71,7 +71,7 @@ pub fn render_board(board: Board) -> Result<String> {
 }
 
 pub fn make_move(board: &Board, new_move: (usize, usize), player: &Player) -> Result<Board> {
-    if !is_valid_move(&board, new_move) {
+    if !is_valid_move(board, new_move) {
         bail!("Invalid move !");
     }
     let mut new_board = duplicate_board(board);

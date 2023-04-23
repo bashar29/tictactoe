@@ -4,7 +4,6 @@ use crate::{
     board,
     player::{self, Player},
 };
-use anyhow::{bail, Result};
 use log::debug;
 
 pub fn play_game() -> Option<Player> {
