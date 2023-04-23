@@ -1,8 +1,11 @@
 use std::io;
 
-use anyhow::{Result, bail};
+use crate::{
+    board,
+    player::{self, Player},
+};
+use anyhow::{bail, Result};
 use log::debug;
-use crate::{player::{Player, self}, board};
 
 pub fn play_game() -> Option<Player> {
     debug!("Launching a new game");
@@ -10,7 +13,7 @@ pub fn play_game() -> Option<Player> {
     let mut board: board::Board = board::generate_new_board();
     let output = board::render_board(board).unwrap();
     println!("{}", output);
-    
+
     let mut full_cases: u8 = 0;
     let mut active_player = Player::PlayerX;
 
@@ -23,22 +26,37 @@ pub fn play_game() -> Option<Player> {
                 println!("{}", output);
                 full_cases += 1;
                 break;
-            }
-            else {
+            } else {
                 println!("Illegal move - try again");
             }
         }
-        if board::is_move_win(&board) {
-            return Some(active_player);
-        }
-        else {
-            if active_player == Player::PlayerX {
-                active_player = Player::PlayerO
-            }
-            else{
-                active_player = Player::PlayerX
-            }
+        match board::is_move_win(&board) {
+            Some(p) => return Some(p),
+            None => active_player = switch_player(&active_player),
         }
     }
     None
+}
+
+pub fn switch_player(active_player: &Player) -> Player {
+    match active_player {
+        Player::PlayerX => Player::PlayerO,
+        Player::PlayerO => Player::PlayerX,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn init() {
+        let _ = env_logger::builder().is_test(true).try_init();
+    }
+
+    #[test]
+    pub fn test_switch_player() {
+        init();
+        let active_player = Player::PlayerO;
+        let next_player = switch_player(&active_player);
+        assert_ne!(active_player,next_player);
+    }
 }

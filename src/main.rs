@@ -1,9 +1,8 @@
 mod board;
-mod player;
 mod game;
+mod player;
 //use anyhow::{Context,Result};
 use log::info;
-
 
 //pub type Error = anyhow::Error;
 //pub type Result<T> = anyhow::Result<T>;
@@ -14,8 +13,7 @@ fn main() {
     player::print_player_input_rule();
 
     match game::play_game() {
-        Some(p) => println!("Well done {:?} !!!",p),
+        Some(p) => println!("Well done {:?} !!!", p),
         None => println!("This is a draw !"),
     }
-
 }
