@@ -7,15 +7,19 @@ pub enum Player {
     PlayerO,
 }
 
+pub fn print_player_input_rule() {
+    debug!("Print player input rules");
+    
+    println!("\nPlease input your move. Format : x_coord (from 0 to 2) , y_coord (from 0 to 2)");
+    println!("Example : > 1,2");
+    println!("Coordinates : ");
+    let board_example =
+        "  0 1 2\n".to_owned() + " -------\n" + "0      \n" + "1      \n" + "2      \n";
+    println!("{}", board_example);
+}
+
 pub fn get_move(input: &mut impl BufRead) -> Result<(usize, usize)> {
     debug!("Get player's move from keyboard");
-
-    // println!("\nPlease input your move. Format : x_coord (from 0 to 2) , y_coord (from 0 to 2)");
-    // println!("Example : > 1,2");
-    // println!("Coordinates : ");
-    // let board_example =
-    //     "  0 1 2\n".to_owned() + " -------\n" + "0      \n" + "1      \n" + "2      \n";
-    // println!("{}", board_example);
 
     loop {
         let player_input = input.lines().next().unwrap()?;
