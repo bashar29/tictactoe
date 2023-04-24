@@ -23,7 +23,6 @@ pub fn print_player_input_rule() {
 
 pub fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> Result<Board> {
     debug!("Get player's move from keyboard");
-
     loop {
         let player_input = input.lines().next().unwrap()?;
         let player_move = match get_input_from_keyboard(&player_input) {
@@ -34,7 +33,7 @@ pub fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player)
             }
         };
         if board::is_valid_move(board, player_move) {
-            let new_board = board::make_move(board, player_move, &active_player).unwrap();
+            let new_board = board::make_move(board, player_move, active_player).unwrap();
             //let output = board::render_board(new_board).unwrap();
             //println!("{}", output);
             return Ok(new_board);
