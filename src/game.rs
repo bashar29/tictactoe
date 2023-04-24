@@ -10,25 +10,18 @@ pub fn play_game() -> Option<Player> {
     debug!("Launching a new game");
 
     let mut board: board::Board = board::generate_new_board();
-    let output = board::render_board(board).unwrap();
+    let mut output = board::render_board(&board).unwrap();
     println!("{}", output);
 
     let mut full_cases: u8 = 0;
     let mut active_player = Player::PlayerX;
 
     while full_cases < 9 {
-        loop {
-            let mv = player::get_move(&mut io::stdin().lock()).unwrap();
-            if board::is_valid_move(&board, mv) {
-                board = board::make_move(&board, mv, &active_player).unwrap();
-                let output = board::render_board(board).unwrap();
-                println!("{}", output);
-                full_cases += 1;
-                break;
-            } else {
-                println!("Illegal move - try again");
-            }
-        }
+        board = player::get_move(&mut io::stdin().lock(), &board, &active_player).unwrap();
+        full_cases += 1;
+        output = board::render_board(&board).unwrap();
+        println!("{}", output);
+
         match board::is_move_win(&board) {
             Some(p) => return Some(p),
             None => active_player = switch_player(&active_player),

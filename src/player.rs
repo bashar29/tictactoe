@@ -2,6 +2,8 @@ use anyhow::{bail, Result};
 use log::debug;
 use std::io::BufRead;
 
+use crate::board::{self, Board};
+
 #[derive(PartialEq, Debug)]
 pub enum Player {
     PlayerX,
@@ -19,14 +21,25 @@ pub fn print_player_input_rule() {
     println!("{}", board_example);
 }
 
-pub fn get_move(input: &mut impl BufRead) -> Result<(usize, usize)> {
+pub fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> Result<Board> {
     debug!("Get player's move from keyboard");
 
     loop {
         let player_input = input.lines().next().unwrap()?;
-        match get_input_from_keyboard(&player_input) {
-            Ok(player_move) => return Ok(player_move),
-            Err(e) => println!("Error : {} \nTry again", e),
+        let player_move = match get_input_from_keyboard(&player_input) {
+            Ok(player_move) => player_move,
+            Err(e) => {
+                println!("Error : {} \nTry again", e);
+                continue;
+            }
+        };
+        if board::is_valid_move(board, player_move) {
+            let new_board = board::make_move(board, player_move, &active_player).unwrap();
+            //let output = board::render_board(new_board).unwrap();
+            //println!("{}", output);
+            return Ok(new_board);
+        } else {
+            println!("Illegal move - try again");
         }
     }
 }
@@ -89,15 +102,19 @@ mod tests {
 
     #[test]
     pub fn test_get_move() {
+        let mut board: Board = [
+            [Some('X'), None, Some('O')],
+            [None, Some('O'), Some('X')],
+            [Some('X'), None, Some('0')],
+        ];
         let mut input = "1,2\n".as_bytes();
-        assert_eq!((2, 1), get_move(&mut input).unwrap());
-        let mut input = "2 ,2 \n".as_bytes();
-        assert_eq!((2, 2), get_move(&mut input).unwrap());
-        let mut input = "2,0\n".as_bytes();
-        assert_eq!((0, 2), get_move(&mut input).unwrap());
-        let mut input = "2,0\n 3,5".as_bytes();
-        assert_eq!((0, 2), get_move(&mut input).unwrap());
-        let mut input = "2,0\n 1,1".as_bytes();
-        assert_eq!((0, 2), get_move(&mut input).unwrap());
+        let new_board = get_move(&mut input, &board, &Player::PlayerX).unwrap();
+        board[2][1] = Some('X');
+        assert_eq!(board, new_board);
+
+        input = "1,0\n".as_bytes();
+        let new_board = get_move(&mut input, &board, &Player::PlayerO).unwrap();
+        board[0][1] = Some('O');
+        assert_eq!(board, new_board);
     }
 }

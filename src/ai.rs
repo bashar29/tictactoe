@@ -36,14 +36,13 @@ mod tests {
         ];
         for _ in 0..33 {
             let mv = random_ai(&board, &Player::PlayerO).unwrap();
-            debug!("{:?}",mv);
-            assert_ne!(mv, (0,0));
-            assert_ne!(mv, (1,0));
-            assert_ne!(mv, (2,0));
-            assert_ne!(mv, (1,1));
-            assert_ne!(mv, (1,2));
-            assert_ne!(mv, (2,2));
+            debug!("{:?}", mv);
+            assert_ne!(mv, (0, 0));
+            assert_ne!(mv, (1, 0));
+            assert_ne!(mv, (2, 0));
+            assert_ne!(mv, (1, 1));
+            assert_ne!(mv, (1, 2));
+            assert_ne!(mv, (2, 2));
         }
     }
-
 }

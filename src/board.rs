@@ -51,7 +51,7 @@ pub fn is_move_win(board: &Board) -> Option<Player> {
     None
 }
 
-pub fn render_board(board: Board) -> Result<String> {
+pub fn render_board(board: &Board) -> Result<String> {
     debug!("Render a board : {:?}", board);
     let mut output = "  0 1 2\n".to_owned();
     output += " -------\n";
@@ -108,7 +108,7 @@ mod tests {
 
         let expected_output =
             "  0 1 2\n".to_owned() + " -------\n" + "0 A   C\n" + "1   E F\n" + "2 G H I\n";
-        let output = render_board(board).unwrap();
+        let output = render_board(&board).unwrap();
         assert_eq!(expected_output, output);
     }
 
