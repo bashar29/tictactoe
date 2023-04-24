@@ -1,6 +1,8 @@
+mod ai;
 mod board;
 mod game;
 mod player;
+//TODO : how to add an AI like a plugin?
 //use anyhow::{Context,Result};
 use log::info;
 
