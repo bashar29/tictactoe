@@ -1,8 +1,8 @@
-use std::io;
+use crate::ai;
 
 use crate::{
     board,
-    player::{self, Player},
+    player::Player,
 };
 use log::debug;
 
@@ -17,7 +17,8 @@ pub fn play_game() -> Option<Player> {
     let mut active_player = Player::PlayerX;
 
     while full_cases < 9 {
-        board = player::get_move(&mut io::stdin().lock(), &board, &active_player).unwrap();
+        //board = player::get_move(&mut io::stdin().lock(), &board, &active_player).unwrap();
+        board = ai::random_ai(&board,&active_player).unwrap();
         full_cases += 1;
         output = board::render_board(&board).unwrap();
         println!("{}", output);
