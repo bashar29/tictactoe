@@ -1,6 +1,6 @@
 use crate::board::{Board, self};
 use crate::player::Player;
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use log::debug;
 use rand::Rng;
 
@@ -14,12 +14,46 @@ pub fn random_ai(board: &Board, player: &Player) -> Result<Board> {
             }
         }
     }
+    let new_board = match select_one_random_move(&legal_moves, board, player) {
+        Some(b) => b,
+        None => return Err(anyhow!("no legal move available")),
+    };
+    Ok(new_board)
+}
+
+pub fn finds_winning_moves_ai(board: &Board, player: &Player) -> Result<Board> {
+    debug!("Search a winning move");
+    let mut legal_moves = Vec::new();
+    for (y, line) in board.iter().enumerate() {
+        for (x, c) in line.iter().enumerate() {
+            if c.is_none() {
+                legal_moves.push((y, x));
+            }
+        }
+    }
+    for m in &legal_moves {
+        let new_board = board::make_move(board, *m, player).unwrap();
+        if board::is_move_win(&new_board).is_some() {
+            return Ok(new_board)
+        }
+    }
+
+    let new_board = match select_one_random_move(&legal_moves, board, player) {
+        Some(b) => b,
+        None => return Err(anyhow!("no legal move available")),
+    };
+    Ok(new_board)
+}
+
+// pub fn finds_winning_and_losing_moves_ai(board: &Board, player: &Player) -> Result<Board> {
+
+// }
+
+fn select_one_random_move(legal_moves: &Vec<(usize,usize)>, board: &Board, player: &Player) -> Option<Board> {
     let mut rng = rand::thread_rng();
     let chosen_move = legal_moves[rng.gen_range(0..legal_moves.len())];
-    debug!("{:?}",(chosen_move.1,chosen_move.0));
     let new_board = board::make_move(board, chosen_move, player).unwrap();
-
-    Ok(new_board)
+    Some(new_board)
 }
 
 #[cfg(test)]
