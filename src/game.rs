@@ -1,9 +1,6 @@
 use crate::ai;
 
-use crate::{
-    board,
-    player::Player,
-};
+use crate::{board, player::Player};
 use log::debug;
 
 pub fn play_game() -> Option<Player> {
@@ -19,7 +16,7 @@ pub fn play_game() -> Option<Player> {
     while full_cases < 9 {
         //board = player::get_move(&mut io::stdin().lock(), &board, &active_player).unwrap();
         //board = ai::random_ai(&board,&active_player).unwrap();
-        board = ai::finds_winning_moves_ai(&board,&active_player).unwrap();
+        board = ai::finds_winning_moves_ai(&board, &active_player).unwrap();
         full_cases += 1;
         output = board::render_board(&board).unwrap();
         println!("{}", output);
