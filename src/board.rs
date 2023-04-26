@@ -4,6 +4,24 @@ use log::debug;
 use crate::player::Player;
 
 pub type Board = [[Option<char>; 3]; 3];
+pub type DiffBoard = ((usize, usize), Option<char>);
+
+/// Get the difference between a board and a board generate by a new move (so there is only one difference)
+pub fn get_difference_between_board_and_next_board(
+    board: &Board,
+    next_board: &Board,
+) -> Option<DiffBoard> {
+    for (y, line) in board.iter().enumerate() {
+        for (x, c) in line.iter().enumerate() {
+            if c.unwrap_or_default()
+                .ne(&next_board[y][x].unwrap_or_default())
+            {
+                return Some(((x, y), *c));
+            }
+        }
+    }
+    None
+}
 
 pub fn generate_new_board() -> Board {
     debug!("Generate a new and clean board");

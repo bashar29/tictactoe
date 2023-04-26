@@ -18,7 +18,7 @@ pub fn finds_winning_moves_ai(board: &Board, player: &Player) -> Result<Board> {
     debug!("Search an immediate winning move");
     let legal_moves = find_all_legal_moves(board);
 
-    if let Some(b) = find_winning_move(&legal_moves, board, player) {
+    if let Some(b) = find_a_winning_move(&legal_moves, board, player) {
         return Ok(b);
     }
 
@@ -29,13 +29,48 @@ pub fn finds_winning_moves_ai(board: &Board, player: &Player) -> Result<Board> {
     Ok(new_board)
 }
 
-// pub fn finds_winning_and_losing_moves_ai(board: &Board, player: &Player) -> Result<Board> {
-//     debug!("search an immediate winning move or block");
-//     let legal_moves = find_all_legal_moves(board);
+pub fn finds_winning_and_not_losing_moves_ai(board: &Board, player: &Player) -> Result<Board> {
+    debug!("search an immediate winning move or block");
+    let legal_moves = find_all_legal_moves(board);
 
-// }
+    if let Some(b) = find_a_winning_move(&legal_moves, board, player) {
+        return Ok(b);
+    }
 
-fn find_winning_move(
+    if let Some(b) = find_a_blocking_move(&legal_moves, board, player) {
+        return Ok(b);
+    }
+
+    let new_board = match select_one_random_move(&legal_moves, board, player) {
+        Some(b) => b,
+        None => return Err(anyhow!("no legal move available")),
+    };
+    Ok(new_board)
+}
+
+fn find_a_blocking_move(
+    legal_moves: &Vec<(usize, usize)>,
+    board: &Board,
+    active_player: &Player,
+) -> Option<Board> {
+    let other_player = match active_player {
+        Player::PlayerX => Player::PlayerO,
+        &Player::PlayerO => Player::PlayerX,
+    };
+    let winning_move = find_a_winning_move(legal_moves, board, &other_player);
+    if winning_move.is_none() {
+        return None;
+    }
+    let mut new_board = winning_move.unwrap();
+    let diff = board::get_difference_between_board_and_next_board(board, &new_board).unwrap();
+    new_board[diff.0.1][diff.0.0] = match active_player {
+        Player::PlayerO => Some('O'),
+        Player::PlayerX => Some('X'),
+    };
+    Some(new_board)
+}
+
+fn find_a_winning_move(
     legal_moves: &Vec<(usize, usize)>,
     board: &Board,
     player: &Player,
@@ -135,8 +170,8 @@ mod tests {
         ];
         let legal_moves = vec![(0, 2), (1, 0), (1, 1), (2, 0), (2, 2)];
         for _ in 1..10 {
-            let winning_board =
-            find_winning_move(&legal_moves, &board, &Player::PlayerX).expect("unexpected ...");
+            let winning_board = find_a_winning_move(&legal_moves, &board, &Player::PlayerX)
+                .expect("unexpected ...");
             assert_eq!(expected_winning_board, winning_board);
         }
     }
@@ -155,6 +190,24 @@ mod tests {
             [None, Some('X'), None],
         ];
         let winning_board = finds_winning_moves_ai(&board, &Player::PlayerX).unwrap();
-        assert_eq!(expected_winning_board,winning_board);
+        assert_eq!(expected_winning_board, winning_board);
+    }
+
+    #[test]
+    pub fn test_find_a_blocking_move() {
+        init();
+        let board: [[Option<char>; 3]; 3] = [
+            [Some('O'), Some('X'), None],
+            [None, Some('X'), Some('O')],
+            [None, None, None],
+        ];
+        let expected_board = [
+            [Some('O'), Some('X'), None],
+            [None, Some('X'), Some('O')],
+            [None, Some('O'), None],
+        ];
+        let legal_moves = vec![(0, 2), (1, 0), (2, 0), (2, 1), (2, 2)];
+        let new_board = find_a_blocking_move(&legal_moves, &board, &Player::PlayerO).unwrap();
+        assert_eq!(expected_board, new_board);
     }
 }
