@@ -210,4 +210,25 @@ mod tests {
         let new_board = find_a_blocking_move(&legal_moves, &board, &Player::PlayerO).unwrap();
         assert_eq!(expected_board, new_board);
     }
+
+    #[test]
+    pub fn test_finds_winning_and_not_losing_moves_ai() {
+        init();
+        let board: [[Option<char>; 3]; 3] = [
+            [Some('O'), Some('X'), None],
+            [None, Some('X'), Some('O')],
+            [None, None, None],
+        ];
+        let expected_board = [
+            [Some('O'), Some('X'), None],
+            [None, Some('X'), Some('O')],
+            [None, Some('O'), None],
+        ];
+        let legal_moves = vec![(0, 2), (1, 0), (2, 0), (2, 1), (2, 2)];
+        let new_board = finds_winning_and_not_losing_moves_ai(&board, &Player::PlayerO).unwrap();
+        assert_eq!(expected_board, new_board);
+
+        // TODO : more variants
+
+    }
 }
