@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use log::debug;
-use std::io::BufRead;
+use std::io::{BufRead, self};
 
 use crate::board::{self, Board};
 
@@ -21,7 +21,7 @@ pub fn print_player_input_rule() {
     println!("{}", board_example);
 }
 
-pub fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> Result<Board> {
+fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> Result<Board> {
     debug!("Get player's move from keyboard");
     loop {
         let player_input = input.lines().next().unwrap()?;
@@ -41,6 +41,10 @@ pub fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player)
             println!("Illegal move - try again");
         }
     }
+}
+
+pub fn human_get_move(board: &Board, active_player: &Player) -> Result<Board> {
+    get_move(&mut io::stdin().lock(), &board, &active_player)
 }
 
 fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {

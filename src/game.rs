@@ -1,4 +1,4 @@
-use crate::ai;
+use crate::{ai, player};
 
 use crate::{board, player::Player};
 use log::debug;
@@ -14,10 +14,10 @@ pub fn play_game() -> Option<Player> {
     let mut active_player = Player::PlayerX;
 
     while full_cases < 9 {
-        //board = player::get_move(&mut io::stdin().lock(), &board, &active_player).unwrap();
+        board = player::human_get_move(&board, &active_player).unwrap();
         //board = ai::random_ai(&board,&active_player).unwrap();
         //board = ai::finds_winning_moves_ai(&board, &active_player).unwrap();
-        board = ai::finds_winning_and_not_losing_moves_ai(&board, &active_player).unwrap();
+        //board = ai::finds_winning_and_not_losing_moves_ai(&board, &active_player).unwrap();
         full_cases += 1;
         output = board::render_board(&board).unwrap();
         println!("{}", output);
