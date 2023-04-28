@@ -63,7 +63,7 @@ fn find_a_blocking_move(
     }
     let mut new_board = winning_move.unwrap();
     let diff = board::get_difference_between_board_and_next_board(board, &new_board).unwrap();
-    new_board[diff.0.1][diff.0.0] = match active_player {
+    new_board[diff.0 .1][diff.0 .0] = match active_player {
         Player::PlayerO => Some('O'),
         Player::PlayerX => Some('X'),
     };
@@ -229,6 +229,5 @@ mod tests {
         assert_eq!(expected_board, new_board);
 
         // TODO : more variants
-
     }
 }
