@@ -35,10 +35,10 @@ pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Pla
                 active_player = switch_player(&active_player);
                 if active_engine == player_x_engine {
                     active_engine = player_o_engine;
-                    debug!("active engine : {:?}",active_engine)
+                    debug!("active engine : {:?}", active_engine)
                 } else {
                     active_engine = player_x_engine;
-                    debug!("active engine : {:?}",active_engine)
+                    debug!("active engine : {:?}", active_engine)
                 }
             }
         }

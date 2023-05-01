@@ -21,6 +21,9 @@ struct Args {
     /// Engine for player Y
     #[arg(short, long)]
     o: String,
+    /// Number of iteration
+    #[arg(short, long)]
+    i: usize,
 }
 
 fn main() {
@@ -49,9 +52,26 @@ fn main() {
     } else {
         engine_o = Engine::WinningAndNotLosingMove;
     }
+    let iteration_number = args.i;
+    let mut results: (usize, usize, usize) = (0, 0, 0);
 
-    match game::play_game(engine_x, engine_o) {
-        Some(p) => println!("Well done {:?} !!!", p),
-        None => println!("This is a draw !"),
+    for i in 0..iteration_number {
+        match game::play_game(engine_x, engine_o) {
+            Some(p) => {
+                println!("Well done {:?} !!!", p);
+                match p {
+                    player::Player::PlayerX => results.0 += 1,
+                    player::Player::PlayerO => results.1 += 1,
+                }
+            }
+            None => {
+                println!("This is a draw !");
+                results.2 += 1
+            }
+        }
     }
+    println!(
+        "X win {} ; O win {} ; draw {}.",
+        results.0, results.1, results.2
+    );
 }
