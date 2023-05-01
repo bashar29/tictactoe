@@ -58,9 +58,10 @@ fn find_a_blocking_move(
         &Player::PlayerO => Player::PlayerX,
     };
     let winning_move = find_a_winning_move(legal_moves, board, &other_player);
-    if winning_move.is_none() {
-        return None;
-    }
+    // if winning_move.is_none() {
+    //     return None;
+    // }
+    winning_move?;
     let mut new_board = winning_move.unwrap();
     let diff = board::get_difference_between_board_and_next_board(board, &new_board).unwrap();
     new_board[diff.0 .1][diff.0 .0] = match active_player {

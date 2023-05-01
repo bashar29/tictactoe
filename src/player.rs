@@ -44,7 +44,7 @@ fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> 
 }
 
 pub fn human_get_move(board: &Board, active_player: &Player) -> Result<Board> {
-    get_move(&mut io::stdin().lock(), &board, &active_player)
+    get_move(&mut io::stdin().lock(), board, active_player)
 }
 
 fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {

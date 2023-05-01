@@ -55,7 +55,7 @@ fn main() {
     let iteration_number = args.i;
     let mut results: (usize, usize, usize) = (0, 0, 0);
 
-    for i in 0..iteration_number {
+    for _i in 0..iteration_number {
         match game::play_game(engine_x, engine_o) {
             Some(p) => {
                 println!("Well done {:?} !!!", p);

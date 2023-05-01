@@ -47,15 +47,14 @@ pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Pla
 }
 
 fn play_move(board: &Board, active_player: &Player, engine: &Engine) -> Result<Board> {
-    let new_board = match engine {
-        Engine::Human => player::human_get_move(&board, &active_player),
-        Engine::RandomMove => ai::random_ai(&board, &active_player),
-        Engine::WinningMove => ai::finds_winning_moves_ai(&board, &active_player),
+    match engine {
+        Engine::Human => player::human_get_move(board, active_player),
+        Engine::RandomMove => ai::random_ai(board, active_player),
+        Engine::WinningMove => ai::finds_winning_moves_ai(board, active_player),
         Engine::WinningAndNotLosingMove => {
-            ai::finds_winning_and_not_losing_moves_ai(&board, &active_player)
+            ai::finds_winning_and_not_losing_moves_ai(board, active_player)
         }
-    };
-    new_board
+    }
 }
 
 fn switch_player(active_player: &Player) -> Player {
