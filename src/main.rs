@@ -30,28 +30,11 @@ fn main() {
     env_logger::init();
     info!("Welcome to tictactoe !!!");
     let args = Args::parse();
+    let engine_x: Engine = get_engine_from_arg(&args.x);
+    let engine_o: Engine = get_engine_from_arg(&args.o);
     player::print_player_input_rule();
 
-    let engine_x: Engine;
-    if args.x == "Human" {
-        engine_x = Engine::Human;
-    } else if args.x == "RandomMove" {
-        engine_x = Engine::RandomMove;
-    } else if args.x == "WinningMove" {
-        engine_x = Engine::WinningMove;
-    } else {
-        engine_x = Engine::WinningAndNotLosingMove;
-    }
-    let engine_o: Engine;
-    if args.o == "Human" {
-        engine_o = Engine::Human;
-    } else if args.o == "RandomMove" {
-        engine_o = Engine::RandomMove;
-    } else if args.o == "WinningMove" {
-        engine_o = Engine::WinningMove;
-    } else {
-        engine_o = Engine::WinningAndNotLosingMove;
-    }
+
     let iteration_number = args.i;
     let mut results: (usize, usize, usize) = (0, 0, 0);
 
@@ -74,4 +57,17 @@ fn main() {
         "X win {} ; O win {} ; draw {}.",
         results.0, results.1, results.2
     );
+}
+
+fn get_engine_from_arg(arg: &str) -> Engine {
+    match arg {
+        "Human" => Engine::Human,
+        "RandomMove" => Engine::RandomMove,
+        "WinningMove" => Engine::WinningMove,
+        "WinningAndNotLosingMove" => Engine::WinningAndNotLosingMove,
+        _ => {
+            println!("Unknown engine passed by args ; RandomMove selected.");
+            Engine::RandomMove
+        }
+    }
 }
