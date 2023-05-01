@@ -225,7 +225,7 @@ mod tests {
             [None, Some('X'), Some('O')],
             [None, Some('O'), None],
         ];
-        let legal_moves = vec![(0, 2), (1, 0), (2, 0), (2, 1), (2, 2)];
+        //let legal_moves = vec![(0, 2), (1, 0), (2, 0), (2, 1), (2, 2)];
         let new_board = finds_winning_and_not_losing_moves_ai(&board, &Player::PlayerO).unwrap();
         assert_eq!(expected_board, new_board);
 
