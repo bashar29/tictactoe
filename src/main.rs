@@ -28,12 +28,11 @@ struct Args {
 
 fn main() {
     env_logger::init();
-    info!("Welcome to tictactoe !!!");
+    info!("Launching tictactoe");
     let args = Args::parse();
     let engine_x: Engine = get_engine_from_arg(&args.x);
     let engine_o: Engine = get_engine_from_arg(&args.o);
     player::print_player_input_rule();
-
 
     let iteration_number = args.i;
     let mut results: (usize, usize, usize) = (0, 0, 0);
@@ -65,6 +64,7 @@ fn get_engine_from_arg(arg: &str) -> Engine {
         "RandomMove" => Engine::RandomMove,
         "WinningMove" => Engine::WinningMove,
         "WinningAndNotLosingMove" => Engine::WinningAndNotLosingMove,
+        "MinMax" => Engine::MinMax,
         _ => {
             println!("Unknown engine passed by args ; RandomMove selected.");
             Engine::RandomMove

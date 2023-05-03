@@ -1,10 +1,10 @@
 use anyhow::{bail, Result};
-use log::debug;
+use log::{debug, info};
 use std::io::{self, BufRead};
 
 use crate::board::{self, Board};
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum Player {
     PlayerX,
     PlayerO,
@@ -22,7 +22,7 @@ pub fn print_player_input_rule() {
 }
 
 fn get_move(input: &mut impl BufRead, board: &Board, active_player: &Player) -> Result<Board> {
-    debug!("Get player's move from keyboard");
+    info!("Get player's move from keyboard");
     loop {
         let player_input = input.lines().next().unwrap()?;
         let player_move = match get_input_from_keyboard(&player_input) {
@@ -48,7 +48,6 @@ pub fn human_get_move(board: &Board, active_player: &Player) -> Result<Board> {
 }
 
 fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {
-    debug!("Transform keyboard input in tuple");
     let mut player_move: (usize, usize) = (usize::MAX, usize::MAX);
     for s in player_input.trim().split(',') {
         if player_move.0 == usize::MAX {
@@ -63,7 +62,6 @@ fn get_input_from_keyboard(player_input: &str) -> Result<(usize, usize)> {
             }
         }
     }
-    debug!("Move : {:?}", player_move);
     if player_move.0 > 2 || player_move.1 > 2 {
         bail!("Coordinates not included in [0..2],[0..2]");
     }

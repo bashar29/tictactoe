@@ -1,11 +1,10 @@
 use crate::board::{self, Board};
+use crate::game;
 use crate::player::Player;
 use anyhow::{anyhow, Result};
-use log::debug;
 use rand::Rng;
 
 pub fn random_ai(board: &Board, player: &Player) -> Result<Board> {
-    debug!("Random AI move generation");
     let legal_moves = find_all_legal_moves(board);
     let new_board = match select_one_random_move(&legal_moves, board, player) {
         Some(b) => b,
@@ -15,7 +14,6 @@ pub fn random_ai(board: &Board, player: &Player) -> Result<Board> {
 }
 
 pub fn finds_winning_moves_ai(board: &Board, player: &Player) -> Result<Board> {
-    debug!("Search an immediate winning move");
     let legal_moves = find_all_legal_moves(board);
 
     if let Some(b) = find_a_winning_move(&legal_moves, board, player) {
@@ -30,7 +28,6 @@ pub fn finds_winning_moves_ai(board: &Board, player: &Player) -> Result<Board> {
 }
 
 pub fn finds_winning_and_not_losing_moves_ai(board: &Board, player: &Player) -> Result<Board> {
-    debug!("search an immediate winning move or block");
     let legal_moves = find_all_legal_moves(board);
 
     if let Some(b) = find_a_winning_move(&legal_moves, board, player) {
@@ -46,6 +43,73 @@ pub fn finds_winning_and_not_losing_moves_ai(board: &Board, player: &Player) -> 
         None => return Err(anyhow!("no legal move available")),
     };
     Ok(new_board)
+}
+
+pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
+    let legal_moves = find_all_legal_moves(board);
+    let mut scores: Vec<(i8, Board)> = Vec::new();
+    for m in legal_moves {
+        let new_board = board::make_move(board, m, player).unwrap();
+        let score = minimax_score(&new_board, player);
+        scores.push((score, new_board));
+    }
+    let mut board = *board;
+    log::debug!("{:?}",scores);
+    match player {
+        Player::PlayerX => {
+            let mut score: i8 = -10;
+            for s in scores {
+                if s.0 > score {
+                    score = s.0;
+                    board = s.1;
+                }
+            }
+            return Ok(board);
+        }
+        Player::PlayerO => {
+            let mut score: i8 = 10;
+            for s in scores {
+                if s.0 < score {
+                    score = s.0;
+                    board = s.1;
+                }
+            }
+            return Ok(board);
+        }
+    }
+}
+
+fn minimax_score(board: &Board, player: &Player) -> i8 {
+    if let Some(score) = minimax_score_win_or_draw(board) {
+        return score;
+    }
+
+    let opponent = game::switch_player(player);
+    let legal_moves = find_all_legal_moves(board);
+    let mut scores: Vec<i8> = Vec::new();
+    for m in legal_moves {
+        let new_board = board::make_move(board, m, &opponent).unwrap();
+        let score = minimax_score(&new_board, &opponent);
+        scores.push(score);
+    }
+
+    match opponent {
+        Player::PlayerX => *scores.iter().max().unwrap(),
+        Player::PlayerO => *scores.iter().min().unwrap(),
+    }
+}
+
+fn minimax_score_win_or_draw(board: &Board) -> Option<i8> {
+    if let Some(player) = board::is_move_win(board) {
+        if player == Player::PlayerX {
+            return Some(10);
+        } else {
+            return Some(-10);
+        }
+    } else if board::is_board_full(board) {
+        return Some(0);
+    }
+    None
 }
 
 fn find_a_blocking_move(
@@ -96,6 +160,7 @@ fn select_one_random_move(
     Some(new_board)
 }
 
+/// return Vec of the possible (y,x) moves
 fn find_all_legal_moves(board: &Board) -> Vec<(usize, usize)> {
     let mut legal_moves = Vec::new();
     for (y, line) in board.iter().enumerate() {
@@ -110,8 +175,8 @@ fn find_all_legal_moves(board: &Board) -> Vec<(usize, usize)> {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
+
     fn init() {
         let _ = env_logger::builder().is_test(true).try_init();
     }
@@ -152,7 +217,7 @@ mod tests {
             [None, Some('X'), None],
         ];
         let legal_moves = vec![(0, 2), (1, 0), (1, 2), (2, 0), (2, 2)];
-        let new_board = select_one_random_move(&legal_moves, &board, &Player::PlayerX);
+        let _new_board = select_one_random_move(&legal_moves, &board, &Player::PlayerX);
         // TODO : how to assert??
     }
 
@@ -230,5 +295,34 @@ mod tests {
         assert_eq!(expected_board, new_board);
 
         // TODO : more variants
+    }
+
+    #[test]
+    fn test_minimax_score() {
+        init();
+        let board = [
+            [Some('O'), Some('X'), Some('X')],
+            [None, Some('X'), Some('O')],
+            [None, Some('O'), Some('X')],
+        ];
+        let active_player: Player = Player::PlayerX;
+        let s = minimax_score(&board, &active_player);
+        assert_eq!(10, s);
+
+        let full_board = [
+            [Some('O'), Some('X'), Some('X')],
+            [Some('X'), Some('X'), Some('O')],
+            [Some('O'), Some('O'), Some('X')],
+        ];
+        let s = minimax_score(&full_board, &active_player);
+        assert_eq!(0, s);
+
+        let loosing_board = [
+            [Some('O'), None, Some('X')],
+            [None, Some('O'), Some('O')],
+            [None, Some('X'), Some('X')],
+        ];
+        let s = minimax_score(&loosing_board, &active_player);
+        assert_eq!(10, s);
     }
 }

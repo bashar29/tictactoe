@@ -1,5 +1,4 @@
 use anyhow::{bail, Result};
-use log::debug;
 
 use crate::player::Player;
 
@@ -24,7 +23,7 @@ pub fn get_difference_between_board_and_next_board(
 }
 
 pub fn generate_new_board() -> Board {
-    debug!("Generate a new and clean board");
+    //debug!("Generate a new and clean board");
     [[None, None, None], [None, None, None], [None, None, None]]
 }
 
@@ -70,7 +69,6 @@ pub fn is_move_win(board: &Board) -> Option<Player> {
 }
 
 pub fn render_board(board: &Board) -> Result<String> {
-    debug!("Render a board : {:?}", board);
     let mut output = "  0 1 2\n".to_owned();
     output += " -------\n";
 
@@ -98,6 +96,17 @@ pub fn make_move(board: &Board, new_move: (usize, usize), player: &Player) -> Re
         Player::PlayerX => new_board[new_move.0][new_move.1] = Some('X'),
     }
     Ok(new_board)
+}
+
+pub fn is_board_full(board: &Board) -> bool {
+    for line in board {
+        for case in line {
+            if let None = case {
+                return false;
+            }
+        }
+    }
+    true
 }
 
 #[cfg(test)]
@@ -181,6 +190,23 @@ mod tests {
         assert_eq!(true, is_valid_move(&board, mv));
         let mv: (usize, usize) = (0, 0);
         assert_eq!(false, is_valid_move(&board, mv));
+    }
+
+    #[test]
+    pub fn test_is_board_full() {
+        init();
+        let board_full: [[Option<char>; 3]; 3] = [
+            [Some('X'), Some('X'), Some('X')],
+            [Some('X'), Some('O'), Some('O')],
+            [Some('O'), Some('X'), Some('O')],
+        ];
+        let board_not_full: [[Option<char>; 3]; 3] = [
+            [Some('X'), Some('X'), Some('X')],
+            [None, Some('O'), Some('O')],
+            [None, Some('X'), Some('O')],
+        ];
+        assert_eq!(true, is_board_full(&board_full));
+        assert_eq!(false, is_board_full(&board_not_full));
     }
 
     #[test]

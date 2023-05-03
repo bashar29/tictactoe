@@ -2,7 +2,7 @@ pub type Result<T> = anyhow::Result<T>;
 use crate::board::Board;
 use crate::{ai, player};
 use crate::{board, player::Player};
-use log::debug;
+use log::{info};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Engine {
@@ -10,10 +10,11 @@ pub enum Engine {
     RandomMove,
     WinningMove,
     WinningAndNotLosingMove,
+    MinMax,
 }
 
 pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Player> {
-    debug!("Launching a new game");
+    info!("Launching a new game");
 
     let mut board: Board = board::generate_new_board();
     let mut output = board::render_board(&board).unwrap();
@@ -35,10 +36,8 @@ pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Pla
                 active_player = switch_player(&active_player);
                 if active_engine == player_x_engine {
                     active_engine = player_o_engine;
-                    debug!("active engine : {:?}", active_engine)
                 } else {
                     active_engine = player_x_engine;
-                    debug!("active engine : {:?}", active_engine)
                 }
             }
         }
@@ -54,10 +53,11 @@ fn play_move(board: &Board, active_player: &Player, engine: &Engine) -> Result<B
         Engine::WinningAndNotLosingMove => {
             ai::finds_winning_and_not_losing_moves_ai(board, active_player)
         }
+        Engine::MinMax => ai::minimax_algo_ai(board, active_player),
     }
 }
 
-fn switch_player(active_player: &Player) -> Player {
+pub fn switch_player(active_player: &Player) -> Player {
     match active_player {
         Player::PlayerX => Player::PlayerO,
         Player::PlayerO => Player::PlayerX,
