@@ -9,3 +9,4 @@ Options for --x and --o
 "WinningMove"
 "WinningAndNotLosingMove"
 "MinMax"
+...
