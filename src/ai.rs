@@ -53,8 +53,9 @@ pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
         let score = minimax_score(&new_board, player);
         scores.push((score, new_board));
     }
-    let mut board = *board;
     log::debug!("{:?}",scores);
+    // TODO : manage Error (no board)
+    let mut board = *board;
     match player {
         Player::PlayerX => {
             let mut score: i8 = -10;
