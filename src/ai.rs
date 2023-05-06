@@ -54,7 +54,11 @@ pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
         scores.push((score, new_board));
     }
     log::debug!("{:?}",scores);
-    // TODO : manage Error (no board)
+    
+    if scores.is_empty() {
+        return Err(anyhow!("no legal move available in minimax_algo_ai"));
+    }
+
     let mut board = *board;
     match player {
         Player::PlayerX => {
@@ -80,6 +84,7 @@ pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
     }
 }
 
+/// Return for a board, and a player (Player X or O), the best possible score using all legal move
 fn minimax_score(board: &Board, player: &Player) -> i8 {
     if let Some(score) = minimax_score_win_or_draw(board) {
         return score;
@@ -100,6 +105,7 @@ fn minimax_score(board: &Board, player: &Player) -> i8 {
     }
 }
 
+/// Return score of a Board if it's a victory or a draw.
 fn minimax_score_win_or_draw(board: &Board) -> Option<i8> {
     if let Some(player) = board::is_move_win(board) {
         if player == Player::PlayerX {
@@ -302,11 +308,11 @@ mod tests {
     fn test_minimax_score() {
         init();
         let board = [
-            [Some('O'), Some('X'), Some('X')],
-            [None, Some('X'), Some('O')],
+            [Some('O'), Some('O'), Some('X')],
+            [Some('X'), Some('X'), Some('O')],
             [None, Some('O'), Some('X')],
         ];
-        let active_player: Player = Player::PlayerX;
+        let active_player: Player = Player::PlayerO;
         let s = minimax_score(&board, &active_player);
         assert_eq!(10, s);
 
@@ -325,5 +331,14 @@ mod tests {
         ];
         let s = minimax_score(&loosing_board, &active_player);
         assert_eq!(10, s);
+
+        let draw_board = [
+            [Some('O'), None, Some('X')],
+            [Some('X'), Some('O'), Some('O')],
+            [None, Some('X'), None ],
+        ];
+        let s = minimax_score(&draw_board, &active_player);
+        assert_eq!(0, s);
+
     }
 }
