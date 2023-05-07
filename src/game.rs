@@ -81,7 +81,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_switch_player() {
+    fn test_switch_player() {
         init();
         let active_player = Player::PlayerO;
         let next_player = switch_player(&active_player);
@@ -89,7 +89,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_play_move() {
+    fn test_play_move() {
         init();
         let active_player = Player::PlayerX;
         let board: Board = [

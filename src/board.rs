@@ -117,7 +117,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_generate_new_board() {
+    fn test_generate_new_board() {
         init();
         let expected: Board = [[None, None, None], [None, None, None], [None, None, None]];
         let actual: Board = generate_new_board();
@@ -125,7 +125,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_render_board() {
+    fn test_render_board() {
         init();
         let board: Board = [
             [Some('A'), None, Some('C')],
@@ -140,7 +140,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_duplicate_board() {
+    fn test_duplicate_board() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), Some('O')],
@@ -152,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_make_move() {
+    fn test_make_move() {
         init();
         let mut board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), Some('O')],
@@ -179,7 +179,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_is_valid_move() {
+    fn test_is_valid_move() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), Some('O')],
@@ -193,7 +193,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_is_board_full() {
+    fn test_is_board_full() {
         init();
         let board_full: [[Option<char>; 3]; 3] = [
             [Some('X'), Some('X'), Some('X')],
@@ -210,7 +210,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_is_move_win() {
+    fn test_is_move_win() {
         init();
         let board_win: [[Option<char>; 3]; 3] = [
             [Some('X'), Some('X'), Some('X')],

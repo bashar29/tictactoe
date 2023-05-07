@@ -211,7 +211,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_random_ai() {
+    fn test_random_ai() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -225,7 +225,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_find_all_legal_moves() {
+    fn test_find_all_legal_moves() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -238,7 +238,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_select_one_random_move() {
+    fn test_select_one_random_move() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -251,7 +251,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_find_winning_move() {
+    fn test_find_winning_move() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -272,7 +272,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_finds_winning_moves_ai() {
+    fn test_finds_winning_moves_ai() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -289,7 +289,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_find_a_blocking_move() {
+    fn test_find_a_blocking_move() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],
@@ -307,7 +307,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_finds_winning_and_not_losing_moves_ai() {
+    fn test_finds_winning_and_not_losing_moves_ai() {
         init();
         let board: [[Option<char>; 3]; 3] = [
             [Some('O'), Some('X'), None],

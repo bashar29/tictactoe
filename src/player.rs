@@ -79,7 +79,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_get_input_from_keyboard() {
+    fn test_get_input_from_keyboard() {
         init();
         let input = "1,2";
         assert_eq!((2, 1), get_input_from_keyboard(input).unwrap());
@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     #[should_panic(expected = "Coordinates not included in [0..2]")]
-    pub fn test_get_bad_input_from_keyboard() {
+    fn test_get_bad_input_from_keyboard() {
         init();
         let input = "1,3";
         get_input_from_keyboard(input).unwrap();
@@ -102,7 +102,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_get_move() {
+    fn test_get_move() {
         let mut board: Board = [
             [Some('X'), None, Some('O')],
             [None, Some('O'), Some('X')],
