@@ -106,7 +106,7 @@ mod tests {
         let mut board: Board = [
             [Some('X'), None, Some('O')],
             [None, Some('O'), Some('X')],
-            [Some('X'), None, Some('0')],
+            [Some('X'), None, Some('O')],
         ];
         let mut input = "1,2\n".as_bytes();
         let new_board = get_move(&mut input, &board, &Player::PlayerX).unwrap();
