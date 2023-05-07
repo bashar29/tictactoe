@@ -100,13 +100,20 @@ mod tests {
         let engine = Engine::RandomMove;
         let mut cache: HashMap<u64, i8> = HashMap::new();
         let new_board = play_move(&board, &active_player, &engine, &mut cache).unwrap();
-        assert!(new_board[0][1] == Some('X') || new_board[1][0] == Some('X') || new_board[2][1] == Some('X'));
+        assert!(
+            new_board[0][1] == Some('X')
+                || new_board[1][0] == Some('X')
+                || new_board[2][1] == Some('X')
+        );
         cache.clear();
-        
+
         let engine = Engine::MinMax;
         let active_player = Player::PlayerO;
         let new_new_board = play_move(&new_board, &active_player, &engine, &mut cache).unwrap();
-        assert!(new_new_board[0][1] == Some('O') || new_new_board[1][0] == Some('O') || new_new_board[2][1] == Some('O'));
-
+        assert!(
+            new_new_board[0][1] == Some('O')
+                || new_new_board[1][0] == Some('O')
+                || new_new_board[2][1] == Some('O')
+        );
     }
 }

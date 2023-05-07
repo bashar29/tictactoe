@@ -91,8 +91,7 @@ pub fn minimax_algo_ai(
 }
 
 /// Return for a board, and a player (Player X or O), the best possible score using all legal move
-pub fn minimax_score(board: &Board, player: &Player, cache: &mut HashMap<u64, i8>) -> i8 {
-    
+fn minimax_score(board: &Board, player: &Player, cache: &mut HashMap<u64, i8>) -> i8 {
     let key = hash::compute_cache(board, player);
     if let Some(score) = cache.get(&key) {
         //log::debug!("Cache Hit");
@@ -115,15 +114,15 @@ pub fn minimax_score(board: &Board, player: &Player, cache: &mut HashMap<u64, i8
 
     match opponent {
         Player::PlayerX => {
-           let score = *scores.iter().max().unwrap();
-           cache.insert(key, score);
-           score
-        },
+            let score = *scores.iter().max().unwrap();
+            cache.insert(key, score);
+            score
+        }
         Player::PlayerO => {
-           let score = *scores.iter().min().unwrap();
-           cache.insert(key, score);
-           score
-        },
+            let score = *scores.iter().min().unwrap();
+            cache.insert(key, score);
+            score
+        }
     }
 }
 

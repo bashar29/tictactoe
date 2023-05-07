@@ -1,6 +1,5 @@
-use anyhow::{bail, Result};
-
 use crate::player::Player;
+use anyhow::{bail, Result};
 
 pub type Board = [[Option<char>; 3]; 3];
 pub type DiffBoard = ((usize, usize), Option<char>);

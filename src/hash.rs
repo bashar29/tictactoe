@@ -57,9 +57,15 @@ mod tests {
         const ASCII_X: u8 = 88;
         const ASCII_O: u8 = 79;
         const ASCII_NONE: u8 = 0;
-        v.push(ASCII_X);v.push(ASCII_NONE);v.push(ASCII_O);
-        v.push(ASCII_NONE);v.push(ASCII_O);v.push(ASCII_X);
-        v.push(ASCII_X);v.push(ASCII_NONE);v.push(ASCII_O);
+        v.push(ASCII_X);
+        v.push(ASCII_NONE);
+        v.push(ASCII_O);
+        v.push(ASCII_NONE);
+        v.push(ASCII_O);
+        v.push(ASCII_X);
+        v.push(ASCII_X);
+        v.push(ASCII_NONE);
+        v.push(ASCII_O);
         v.push(ASCII_X);
 
         let mut hasher = std::collections::hash_map::DefaultHasher::new();
@@ -67,6 +73,5 @@ mod tests {
         let expected_cache = hasher.finish();
 
         assert_eq!(expected_cache, compute_cache(&board, &player));
-
     }
 }
