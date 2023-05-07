@@ -1,8 +1,10 @@
 pub type Result<T> = anyhow::Result<T>;
+use std::collections::HashMap;
+
 use crate::board::Board;
 use crate::{ai, player};
 use crate::{board, player::Player};
-use log::{info};
+use log::info;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Engine {
@@ -24,8 +26,10 @@ pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Pla
     let mut active_player = Player::PlayerX;
     let mut active_engine = player_x_engine;
 
+    let mut cache: HashMap<u64, i8> = HashMap::new();
+
     while full_cases < 9 {
-        board = play_move(&board, &active_player, &active_engine).unwrap();
+        board = play_move(&board, &active_player, &active_engine, &mut cache).unwrap();
         full_cases += 1;
         output = board::render_board(&board).unwrap();
         println!("{}", output);
@@ -45,7 +49,12 @@ pub fn play_game(player_x_engine: Engine, player_o_engine: Engine) -> Option<Pla
     None
 }
 
-fn play_move(board: &Board, active_player: &Player, engine: &Engine) -> Result<Board> {
+fn play_move(
+    board: &Board,
+    active_player: &Player,
+    engine: &Engine,
+    cache: &mut HashMap<u64, i8>,
+) -> Result<Board> {
     match engine {
         Engine::Human => player::human_get_move(board, active_player),
         Engine::RandomMove => ai::random_ai(board, active_player),
@@ -53,7 +62,7 @@ fn play_move(board: &Board, active_player: &Player, engine: &Engine) -> Result<B
         Engine::WinningAndNotLosingMove => {
             ai::finds_winning_and_not_losing_moves_ai(board, active_player)
         }
-        Engine::MinMax => ai::minimax_algo_ai(board, active_player),
+        Engine::MinMax => ai::minimax_algo_ai(board, active_player, cache),
     }
 }
 

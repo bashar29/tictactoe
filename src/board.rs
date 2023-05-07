@@ -101,7 +101,7 @@ pub fn make_move(board: &Board, new_move: (usize, usize), player: &Player) -> Re
 pub fn is_board_full(board: &Board) -> bool {
     for line in board {
         for case in line {
-            if let None = case {
+            if case.is_none() {
                 return false;
             }
         }

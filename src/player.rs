@@ -4,7 +4,7 @@ use std::io::{self, BufRead};
 
 use crate::board::{self, Board};
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Debug, Clone, Copy, Hash)]
 pub enum Player {
     PlayerX,
     PlayerO,

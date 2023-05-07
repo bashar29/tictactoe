@@ -1,6 +1,7 @@
 mod ai;
 mod board;
 mod game;
+mod hash;
 mod player;
 use game::Engine;
 //TODO : how to add an AI like a plugin?

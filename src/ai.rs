@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use crate::board::{self, Board};
-use crate::game;
 use crate::player::Player;
+use crate::{game, hash};
 use anyhow::{anyhow, Result};
 use rand::Rng;
 
@@ -45,16 +47,20 @@ pub fn finds_winning_and_not_losing_moves_ai(board: &Board, player: &Player) -> 
     Ok(new_board)
 }
 
-pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
+pub fn minimax_algo_ai(
+    board: &Board,
+    player: &Player,
+    cache: &mut HashMap<u64, i8>,
+) -> Result<Board> {
     let legal_moves = find_all_legal_moves(board);
     let mut scores: Vec<(i8, Board)> = Vec::new();
     for m in legal_moves {
         let new_board = board::make_move(board, m, player).unwrap();
-        let score = minimax_score(&new_board, player);
+        let score = minimax_score(&new_board, player, cache);
         scores.push((score, new_board));
     }
-    log::debug!("{:?}",scores);
-    
+    //log::debug!("{:?}", scores);
+
     if scores.is_empty() {
         return Err(anyhow!("no legal move available in minimax_algo_ai"));
     }
@@ -69,7 +75,7 @@ pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
                     board = s.1;
                 }
             }
-            return Ok(board);
+            Ok(board)
         }
         Player::PlayerO => {
             let mut score: i8 = 10;
@@ -79,14 +85,22 @@ pub fn minimax_algo_ai(board: &Board, player: &Player) -> Result<Board> {
                     board = s.1;
                 }
             }
-            return Ok(board);
+            Ok(board)
         }
     }
 }
 
 /// Return for a board, and a player (Player X or O), the best possible score using all legal move
-fn minimax_score(board: &Board, player: &Player) -> i8 {
+pub fn minimax_score(board: &Board, player: &Player, cache: &mut HashMap<u64, i8>) -> i8 {
+    
+    let key = hash::compute_cache(board, player);
+    if let Some(score) = cache.get(&key) {
+        //log::debug!("Cache Hit");
+        return *score;
+    }
+
     if let Some(score) = minimax_score_win_or_draw(board) {
+        cache.insert(key, score);
         return score;
     }
 
@@ -95,13 +109,21 @@ fn minimax_score(board: &Board, player: &Player) -> i8 {
     let mut scores: Vec<i8> = Vec::new();
     for m in legal_moves {
         let new_board = board::make_move(board, m, &opponent).unwrap();
-        let score = minimax_score(&new_board, &opponent);
+        let score = minimax_score(&new_board, &opponent, cache);
         scores.push(score);
     }
 
     match opponent {
-        Player::PlayerX => *scores.iter().max().unwrap(),
-        Player::PlayerO => *scores.iter().min().unwrap(),
+        Player::PlayerX => {
+           let score = *scores.iter().max().unwrap();
+           cache.insert(key, score);
+           score
+        },
+        Player::PlayerO => {
+           let score = *scores.iter().min().unwrap();
+           cache.insert(key, score);
+           score
+        },
     }
 }
 
@@ -313,32 +335,37 @@ mod tests {
             [None, Some('O'), Some('X')],
         ];
         let active_player: Player = Player::PlayerO;
-        let s = minimax_score(&board, &active_player);
+        let mut cache: HashMap<u64, i8> = HashMap::new();
+
+        let s = minimax_score(&board, &active_player, &mut cache);
         assert_eq!(10, s);
+        cache.clear();
 
         let full_board = [
             [Some('O'), Some('X'), Some('X')],
             [Some('X'), Some('X'), Some('O')],
             [Some('O'), Some('O'), Some('X')],
         ];
-        let s = minimax_score(&full_board, &active_player);
+        let s = minimax_score(&full_board, &active_player, &mut cache);
         assert_eq!(0, s);
+        cache.clear();
 
         let loosing_board = [
             [Some('O'), None, Some('X')],
             [None, Some('O'), Some('O')],
             [None, Some('X'), Some('X')],
         ];
-        let s = minimax_score(&loosing_board, &active_player);
+        let s = minimax_score(&loosing_board, &active_player, &mut cache);
         assert_eq!(10, s);
+        cache.clear();
 
         let draw_board = [
             [Some('O'), None, Some('X')],
             [Some('X'), Some('O'), Some('O')],
-            [None, Some('X'), None ],
+            [None, Some('X'), None],
         ];
-        let s = minimax_score(&draw_board, &active_player);
+        let s = minimax_score(&draw_board, &active_player, &mut cache);
         assert_eq!(0, s);
-
+        cache.clear();
     }
 }
